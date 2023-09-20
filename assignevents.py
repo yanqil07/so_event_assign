@@ -12,9 +12,9 @@ COACH_KID_COL_INDEX = 7
 EVENT_PREF_START_COL = 12
 EVENT_PREF_END_COL = 35
 SCHED_PREF_START_COL = 42   
-SCHED_PREF_END_COL = 57
-EVENT_RETAIN_START_COL = 58
-EVENT_RETAIN_END_COL = 61
+SCHED_PREF_END_COL = 64
+EVENT_RETAIN_START_COL = 65
+EVENT_RETAIN_END_COL = 66
 
 #column index for Course Data File
 EVENT_ID_ROW_INDEX = 0
@@ -211,8 +211,13 @@ class eventAssigner(object):
                     if(self.first_name_db[student_num] == "Euan"):
                         print(self.event_preference_dict[student_num])
                     for event_indx in range (0, NUM_SCIENCE_OLY_EVENTS):
-                        event_name = self.EventIDToName(self.event_preference_dict[student_num][event_indx])
-                        outfile.write("{0},".format(event_name))
+                        #student_index = get_student_index_from_name()
+                        is_schd_conflict = self.event_fits_into_student_schedule(student_num, event_indx)
+                        if(not is_schd_conflict):
+                            event_name = self.EventIDToName(self.event_preference_dict[student_num][event_indx])
+                            outfile.write("{0},".format(event_name))
+                        else:
+                            outfile.write(" ,")
                     outfile.write("\n")
                     
 
@@ -663,17 +668,17 @@ if __name__ == '__main__':
     assigner = eventAssigner()
     assigner.readstudentinfo(sys.argv[1])
     assigner.readCourseData(sys.argv[2])
-    #assigner.writeEventPreferences("eventPrefs.csv")
+    assigner.writeEventPreferences("eventPrefs.csv")
 
     # check if event assignment is correct
-    assigner.readAndCheckAssignedEvents(sys.argv[3])
+    #assigner.readAndCheckAssignedEvents(sys.argv[3])
 
     print("\n\r**************************************")
     print("**** Starting event assignment *****")
     print("**************************************\n\r")
 
 
-    #assigner.assign_coach_kid_first_event()
+#    assigner.assign_coach_kid_first_event()
 #    assigner.assign_repeat_events()
     #assigner.assign_remaining_events()
 #    assigner.print_student_assignments()

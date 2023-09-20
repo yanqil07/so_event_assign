@@ -8,10 +8,10 @@
             "name": "Python: RankAndScoreCalculate",
             "type": "python",
             "request": "launch",
-            "program": "./ConvertScores.py",
-            "cwd": "${workspaceRoot}/rank_and_score/",
+            "program": "./assignevents.py",
+            "cwd": "${workspaceRoot}/",
             "console": "integratedTerminal",
-            "args": [],
+            "args": ["StudentInfo_1.csv","CourseInfo.csv"],
             "justMyCode": false
         },
     ]

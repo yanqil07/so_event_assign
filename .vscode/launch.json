@@ -11,7 +11,7 @@
             "program": "./assignevents.py",
             "cwd": "${workspaceRoot}/",
             "console": "integratedTerminal",
-            "args": ["StudentInfo_1.csv","CourseInfo.csv"],
+            "args": ["StudentData-2023-09-21T21.csv","CourseData-2023-09-21T21.csv","Team1_2023.csv"],
             "justMyCode": false
         },
     ]

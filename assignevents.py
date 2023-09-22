@@ -270,6 +270,7 @@ class eventAssigner(object):
         event_id_set = []
         print(event_set)
         for event_name in event_set:
+            event_name = event_name.strip()
             if event_name:
                 found, event_id = self.get_event_id_from_name(event_name)
                 if(found):
@@ -673,10 +674,10 @@ if __name__ == '__main__':
     assigner = eventAssigner()
     assigner.readstudentinfo(sys.argv[1])
     assigner.readCourseData(sys.argv[2])
-    assigner.writeEventPreferences("eventPrefs.csv")
+    #assigner.writeEventPreferences("eventPrefs.csv")
 
     # check if event assignment is correct
-    #assigner.readAndCheckAssignedEvents(sys.argv[3])
+    assigner.readAndCheckAssignedEvents(sys.argv[3])
 
     print("\n\r**************************************")
     print("**** Starting event assignment *****")

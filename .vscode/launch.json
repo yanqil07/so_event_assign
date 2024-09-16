@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: EventAssigner",
+            "type": "python",
+            "request": "launch",
+            "program": "./assignevents.py",
+            "cwd": "${workspaceRoot}/",
+            "console": "integratedTerminal",
+            "args": ["StudentData-2023-09-21T21.csv","CourseData-2023-09-21T21.csv","Team1_2023.csv"],
+            "justMyCode": false
+        },
+        {
             "name": "Python: RankAndScoreCalculate",
             "type": "python",
             "request": "launch",

@@ -12,9 +12,9 @@ COACH_KID_COL_INDEX = 7
 EVENT_PREF_START_COL = 12
 EVENT_PREF_END_COL = 35
 SCHED_PREF_START_COL = 42   
-SCHED_PREF_END_COL = 57
-EVENT_RETAIN_START_COL = 58
-EVENT_RETAIN_END_COL = 61
+SCHED_PREF_END_COL = 64
+EVENT_RETAIN_START_COL = 65
+EVENT_RETAIN_END_COL = 66
 
 #column index for Course Data File
 EVENT_ID_ROW_INDEX = 0
@@ -210,9 +210,19 @@ class eventAssigner(object):
                     outfile.write("{0} {1},".format(self.first_name_db[student_num], self.last_name_db[student_num]))
                     if(self.first_name_db[student_num] == "Euan"):
                         print(self.event_preference_dict[student_num])
-                    for event_indx in range (0, NUM_SCIENCE_OLY_EVENTS):
-                        event_name = self.EventIDToName(self.event_preference_dict[student_num][event_indx])
-                        outfile.write("{0},".format(event_name))
+                    for indx in range (0, NUM_SCIENCE_OLY_EVENTS):
+                        found, event_array_indx = self.get_event_array_index_from_id(self.event_preference_dict[student_num][indx])
+                        if(found):
+                            does_event_fit = self.event_fits_into_student_schedule(student_num, event_array_indx)
+                            if(does_event_fit):
+                                event_name = self.EventIDToName(self.event_preference_dict[student_num][indx])
+                                outfile.write("{0},".format(event_name))
+                            else:
+                                outfile.write(" ,")
+                        else:
+                            print(f"Error Event ID {self.event_preference_dict[student_num][indx]} not found")
+                            outfile.write(f"Error Event ID {self.event_preference_dict[student_num][indx]} not found\n")      
+                            return  
                     outfile.write("\n")
                     
 
@@ -238,15 +248,15 @@ class eventAssigner(object):
                         print("Assigned events = ", self.student_assignment_dict[student_index]) 
         return(does_not_conflict)
 
-    def get_event_index_from_id(self, desired_event_id):
-        event_index = 0
+    def get_event_array_index_from_id(self, desired_event_id):
+        event_array_indx = 0
         found = False
         for event_id in self.event_id_db:
             if(event_id == desired_event_id):
                 found = True
-                return(found, event_index)
-            event_index+=1
-        return(found, event_index)
+                return(found, event_array_indx)
+            event_array_indx+=1
+        return(found, event_array_indx)
 
     def get_event_id_from_name(self, target_event_name):
         index = 0
@@ -260,6 +270,7 @@ class eventAssigner(object):
         event_id_set = []
         print(event_set)
         for event_name in event_set:
+            event_name = event_name.strip()
             if event_name:
                 found, event_id = self.get_event_id_from_name(event_name)
                 if(found):
@@ -280,10 +291,10 @@ class eventAssigner(object):
         return(conflict_found)
 
     def append_event_conflicts_to_conflict_list(self, event_id, events_that_conflict):
-        found, event_index = self.get_event_index_from_id(event_id)
+        found, event_array_indx = self.get_event_array_index_from_id(event_id)
         new_event_conflict_list = events_that_conflict
         if(found):
-            for conflict_event_id in self.event_conflict_dict[event_index]:
+            for conflict_event_id in self.event_conflict_dict[event_array_indx]:
                 new_event_conflict_list.append(conflict_event_id)
             return(True, new_event_conflict_list)
         else:
@@ -328,10 +339,10 @@ class eventAssigner(object):
             for event_id in event_set:
                 # update event conflict
                 if(event_id):
-                    found, event_index = self.get_event_index_from_id(event_id)
+                    found, event_array_index = self.get_event_array_index_from_id(event_id)
                     if(found):
                         #print("Event index = {0}".format(event_index))
-                        does_this_event_fit = self.event_fits_into_student_schedule(student_id, event_index)
+                        does_this_event_fit = self.event_fits_into_student_schedule(student_id, event_array_index)
                         if(not does_this_event_fit):
                             print("Event {0} conflicts with schedule".format(self.EventIDToName(event_id)))
                             does_event_fit = False
@@ -673,7 +684,7 @@ if __name__ == '__main__':
     print("**************************************\n\r")
 
 
-    #assigner.assign_coach_kid_first_event()
+#    assigner.assign_coach_kid_first_event()
 #    assigner.assign_repeat_events()
     #assigner.assign_remaining_events()
 #    assigner.print_student_assignments()

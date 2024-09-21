@@ -1,0 +1,39 @@
+# PTMS Science Olympiad Course Data 2024
+# Seed 124
+# Iterations 2000
+multipass,0
+timeslots,21
+preferences,30
+maxclassload,4
+optimize,MISERY
+# Event ID,Event Name,Type,Capacity,Flagged,Team Size,TimeSlot,Comp TimeSlot,Conflict Count,Conflicts
+463,Air Trajectory,3,20,0,2,11,,2,463,477
+464,Anatomy and Physiology,1,20,0,2,0,4,3,484,468,464
+465,Codebusters,2,30,0,3,1,5,3,480,469,465
+466,Crime Busters,2,20,0,2,2,6,3,481,466,478
+467,Disease Detectives,1,20,0,2,3,2,3,467,475,474
+468,Dynamic Planet,1,20,0,2,4,4,3,484,468,464
+469,Ecology,1,20,0,2,5,5,3,480,469,465
+470,Entomology,1,20,0,2,6,3,3,479,485,470
+471,Experimental Design,2,24,0,3,7,1,3,471,472,476
+472,Fossils,1,20,0,2,12,1,3,471,472,476
+473,Helicopter,3,20,0,2,8,,0
+474,Meteorology,1,20,0,2,9,2,3,467,475,474
+475,Metric Mastery,1,20,0,2,10,2,3,467,475,474
+476,Microbe Mission,1,20,0,2,12,1,3,471,472,476
+477,Mission Possible,3,20,0,2,11,,2,463,477
+478,Optics,2,20,0,2,13,6,3,481,466,478
+479,Potions and Poisons,2,20,0,2,14,3,3,479,485,470
+480,Reach for the Stars,1,20,0,2,15,5,3,480,469,465
+481,Road Scholar,1,20,0,2,17,6,3,481,466,478
+482,Scrambler,3,20,0,2,16,,0
+483,Tower,3,20,0,2,18,,0
+484,Wind Power,3,20,0,2,20,4,3,484,468,464
+485,Write It Do It,2,20,0,2,19,3,3,479,485,470
+486,zTBD1,1,0,0,2,-1,,0
+487,zTBD2,1,0,0,2,-1,,0
+488,zTBD3,1,0,0,2,-1,,0
+489,zTBD4,1,0,0,2,-1,,0
+490,zTBD5,1,0,0,2,-1,,0
+491,zTBD6,1,0,0,2,-1,,0
+492,zTBD7,1,0,0,2,-1,,0

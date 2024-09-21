@@ -28,6 +28,18 @@ SCHDLE_FILE_TB_STRT_COL_IDX = 3
 # There are really 6 time blocks but lunch is usually included
 SCHDLE_FILE_NUM_TBS = 7
 
+_event_name_in_schedule = ["AIR","ANAT","CAPOW","CODE","CRIME",
+                    "DD","DP","ECO","EXPD","FACTS",
+                    "FLITE","FOREST","FOS","MET","MM",
+                    "OPT","REACH","ROAD","ROLL","TOW",
+                    "WHEEL","WIND","WIDI"]
+
+_event_name_in_results = ["Air","Anat","Powder","Code","Crime Buster",
+                     "DD","Dynamic Planet","Ecology","EXPD","Fast Facts",
+                     "Flight","Forestry","Foss","Meteorology","Microbe",
+                     "Optics","Stars","Road Scholar","Roller Coaster","Tower",
+                     "Wheel Vehicle","Wind","WIDI"]
+
 class StudentEvents(object):
     def __init__(self):
         self.team_number = 0
@@ -144,8 +156,8 @@ class RankAndScore(object):
         base_name = os.path.basename(input_file_name)
         base_name = os.path.splitext(base_name)[0]
         output_log_filename = self.OUTPUT_PATH + base_name + ".log"
-        output_scores_filename = self.OUTPUT_PATH + base_name + " Scores.csv"
-        output_ranks_filename = self.OUTPUT_PATH + base_name + " Ranks.csv"
+        output_scores_filename = self.OUTPUT_PATH + base_name + "_Scores.csv"
+        output_ranks_filename = self.OUTPUT_PATH + base_name + "_Ranks.csv"
         
         # Check whether the specified path exists or not
         isExist = os.path.exists(self.OUTPUT_PATH)
@@ -192,7 +204,7 @@ class RankAndScore(object):
 
         return(is_found, team_result)
 
-    def write_student_result(self, team_result, student_event, results_file, rank_file, log_file, team_number, event_names, num_teams):
+    def write_student_result(self, team_result, student_event, results_file, rank_file, log_file, team_number, event_names, num_teams, translate_event_names):
         #if the student belongs to this team
         total_score = 0
         if(student_event.team_number == team_number):
@@ -202,12 +214,17 @@ class RankAndScore(object):
 
             # for each event in the list of event
             col_idx = self.RESULT_FILE_RESULT_STRT_COL_IDX
+            event_idx = 0
             for event in event_names:
                 # check if student has that event
                 student_has_event = False
+                if translate_event_names:
+                    schedule_event_name = _event_name_in_schedule[event_idx].upper()
+                else:
+                    schedule_event_name = event.upper()
                 for student_event_idx in range(0, student_event.num_events):
-                    if(student_event.event_names[student_event_idx] == event):
-                        #write the score fo that rank
+                    if(student_event.event_names[student_event_idx].upper() == schedule_event_name):
+                        #write the score for that rank
                         rank = int(team_result[col_idx])
                         points = ((num_teams - rank + 1)/num_teams) * student_event.event_multipliers[student_event_idx] * 100
                         # cap points to 100
@@ -224,6 +241,7 @@ class RankAndScore(object):
                     rank_file.write(f",")
                     results_file.write(f",")
                 col_idx+=1
+                event_idx+=1
 
             # calc and write average
             avg_score = 0
@@ -243,7 +261,8 @@ class RankAndScore(object):
                                  student_events, 
                                  event_names, 
                                  num_teams,
-                                 is_team_num_a_col=False):
+                                 is_team_num_a_col=False,
+                                 translate_event_names=False):
         # for each student in the team, look up event result and write result
         team_number = int(team_number_str)
         
@@ -253,13 +272,17 @@ class RankAndScore(object):
         # write result for each student in the team
         if is_found:
             for student_event in student_events:
-                self.write_student_result(team_result, student_event, results_file, out_rank_file, log_file, team_number, event_names, num_teams)
+                self.write_student_result(team_result, student_event, results_file, out_rank_file, log_file, team_number, event_names, num_teams, translate_event_names)
         else:
             log_file.writ(f"\n\r!!!ERROR, team number {team_number} not found")
             print(f"ERROR, team number {team_number} not found")
 
-    def calculate_scores_from_ranks(self, competition_results, team_schedules, is_team_num_a_col=False,
-                                    starting_col = SCHDLE_FILE_TB_STRT_COL_IDX, num_cols = SCHDLE_FILE_NUM_TBS):
+    def calculate_scores_from_ranks(self, competition_results, 
+                                          team_schedules, 
+                                          is_team_num_a_col=False,
+                                          starting_col = SCHDLE_FILE_TB_STRT_COL_IDX, 
+                                          num_cols = SCHDLE_FILE_NUM_TBS,
+                                          translate_event_names = False):
         output_log_filename, output_scores_filename, output_ranks_filename = self.gen_output_file_name(competition_results)
         with open(output_log_filename, 'w') as outlogfile:
             outlogfile.write("Starting Event Score calculation\n\r")
@@ -274,8 +297,10 @@ class RankAndScore(object):
                 self.write_results_file_header(out_rank_file, event_names)
                 for team_number_str in team_numbers_str:
                     self.write_team_results(out_result_file, out_rank_file, outlogfile, team_number_str, team_results, 
-                                            student_events, event_names, num_teams_in_results, is_team_num_a_col)
+                                            student_events, event_names, num_teams_in_results, is_team_num_a_col,translate_event_names)
 
+        out_rank_file.close()
+        out_result_file.close()
 
 if __name__ == '__main__':
     print("\n\r**************************************")
@@ -287,8 +312,10 @@ if __name__ == '__main__':
 #    score_calc.calculate_scores_from_ranks("inputs/BIRD SO Results.csv", "inputs/BIRD SO Schedule.csv")
 #    score_calc.calculate_scores_from_ranks("inputs/OA Satellite Results.csv", "inputs/OA Satellite Schedule.csv")
 #    score_calc.calculate_scores_from_ranks("inputs/BIRD SO Results 2024.csv", "inputs/BIRD SO Schedule 2024.csv", is_team_num_a_col=True)
-    score_calc.calculate_scores_from_ranks("inputs/SDRegionalResultsFinal.csv", "inputs/SDRegionalSchedule.csv", is_team_num_a_col=True, starting_col=3, num_cols=7)
+#    score_calc.calculate_scores_from_ranks("inputs/SanDiegoRegional_B_final.csv", "inputs/SDRegionalSchedule.csv", is_team_num_a_col=True, starting_col=3, num_cols=7)
 #    assigner.readCourseData(sys.argv[2])
+    score_calc.calculate_scores_from_ranks("inputs/SDRegional_B_final.csv", "inputs/PTMS_RegionalSchedule.csv", is_team_num_a_col=True, starting_col=3, num_cols=7, translate_event_names=True)
+#    score_calc.calculate_scores_from_ranks("inputs/SanDiegoRegional_B_final.csv", "inputs/SDRegionalSchedSycamoreRidge.csv", is_team_num_a_col=True, starting_col=3, num_cols=7)
 #
 #    # check if event assignment is correct
 #    assigner.readAndCheckAssignedEvents(sys.argv[3])

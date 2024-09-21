@@ -10,11 +10,11 @@ MAX_EVENTS_COL_INDEX = 4
 MAX_BUILD_EVENTS_COL_INDEX = 5
 COACH_KID_COL_INDEX = 7
 EVENT_PREF_START_COL = 12
-EVENT_PREF_END_COL = 35
-SCHED_PREF_START_COL = 42   
-SCHED_PREF_END_COL = 64
-EVENT_RETAIN_START_COL = 65
-EVENT_RETAIN_END_COL = 66
+EVENT_PREF_END_COL = 41
+SCHED_PREF_START_COL = 42
+SCHED_PREF_END_COL = 66
+EVENT_RETAIN_START_COL = 67
+EVENT_RETAIN_END_COL = 67
 
 #column index for Course Data File
 EVENT_ID_ROW_INDEX = 0
@@ -85,7 +85,12 @@ class eventAssigner(object):
             csv_file = csv.reader(csvfile, delimiter=',')
 
             #read first row
-            header = next(csv_file)
+            header_found = False
+            header = []
+            while not header_found:
+                header = next(csv_file)
+                if("# SID" in header):
+                    header_found = True
 
             for event_index in range(0, NUM_SCIENCE_OLY_EVENTS):
                 self.num_students_in_event.append(0)
@@ -145,7 +150,12 @@ class eventAssigner(object):
             csv_file = csv.reader(csvfile, delimiter=',')
 
             #read first row
-            header = next(csv_file)
+            header_found = False
+            header = []
+            while not header_found:
+                header = next(csv_file)
+                if("# Event ID" in header):
+                    header_found = True
 
             #read remaining rows
             for row in csv_file:
@@ -260,8 +270,10 @@ class eventAssigner(object):
 
     def get_event_id_from_name(self, target_event_name):
         index = 0
+        target_event_name_upper = target_event_name.upper()
         for event_name in self.event_name_db:
-            if(event_name == target_event_name):
+            event_name_upper = event_name.upper()
+            if(event_name_upper == target_event_name_upper):
                 return(True, self.event_id_db[index])
             index+=1
         return(False, index)
@@ -304,7 +316,7 @@ class eventAssigner(object):
     def check_event_set_has_no_event_conflicts(self, student_name, event_set):
         does_not_conflict = True
         length = len(event_set)
-        print("\n" + student_name)
+        #print("\n" + student_name)
         events_that_conflict = []
         for event_id in event_set:
             # update event conflict
@@ -361,6 +373,7 @@ class eventAssigner(object):
         # Go through all students
         for student_record in assigned_events_db:
             # check event conflicts 
+            print(f'\nChecking student {student_record[0]}')
             no_student_conflict_found = True
             is_translation_successful, event_id_db = self.translate_event_names_to_id(student_record[1:len(student_record)])
             if(is_translation_successful):
@@ -674,7 +687,7 @@ if __name__ == '__main__':
     assigner = eventAssigner()
     assigner.readstudentinfo(sys.argv[1])
     assigner.readCourseData(sys.argv[2])
-    #assigner.writeEventPreferences("eventPrefs.csv")
+#    assigner.writeEventPreferences("eventPrefs.csv")
 
     # check if event assignment is correct
     assigner.readAndCheckAssignedEvents(sys.argv[3])

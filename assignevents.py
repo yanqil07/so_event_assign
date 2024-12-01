@@ -98,9 +98,9 @@ class eventAssigner(object):
             #read remaining rows
             for row in csv_file:
                 print(row)
-                first_name = row[FIRST_NAME_COL_INDEX]
+                first_name = row[FIRST_NAME_COL_INDEX].strip()
                 self.first_name_db.append(first_name)
-                self.last_name_db.append(row[LAST_NAME_COL_INDEX])
+                self.last_name_db.append(row[LAST_NAME_COL_INDEX].strip())
                 self.coach_kid_db.append(row[COACH_KID_COL_INDEX])
                 self.max_events_db.append(int(row[MAX_EVENTS_COL_INDEX]))
                 self.event_pref_index_db.append(0)
@@ -337,7 +337,8 @@ class eventAssigner(object):
         #print("searching for " + target_student_name)
         for student_name in self.first_name_db:
             student_name = self.first_name_db[student_index] + " " + self.last_name_db[student_index] 
-            if(student_name == target_student_name):
+            target_student_name_upper = target_student_name.upper()
+            if(student_name.upper() == target_student_name_upper):
                 return(True, student_index)
             student_index += 1
         return(False, student_index)
@@ -433,11 +434,11 @@ class eventAssigner(object):
             #read remaining rows
             for row in csv_file:
                 event_assignment_record = []
-                event_assignment_record.append(row[0])
-                event_assignment_record.append(row[1])
-                event_assignment_record.append(row[2])
-                event_assignment_record.append(row[3])
-                event_assignment_record.append(row[4])
+                event_assignment_record.append(row[0].strip())
+                event_assignment_record.append(row[1].strip())
+                event_assignment_record.append(row[2].strip())
+                event_assignment_record.append(row[3].strip())
+                event_assignment_record.append(row[4].strip())
                 event_assignment_db.append(event_assignment_record)
 
             self.check_event_assignment_has_no_conflict(event_assignment_db)
